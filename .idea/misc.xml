@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.6 (data_anlysis)" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.5 (video-transition-detector-48b9e7Mw)" project-jdk-type="Python SDK" />
+>>>>>>> 0136419dd1a9c6e2141f333ee28ab0c375476ad6
 </project>
