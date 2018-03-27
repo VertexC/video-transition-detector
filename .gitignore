@@ -1,7 +1,10 @@
-#pycharm
+#Pycharm
 .idea/
 
-#Byte-compiled / optimized / DLL files
+# IntelliJ
+.idea/
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
