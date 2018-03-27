@@ -43,3 +43,21 @@ def bgr_to_gr(image_bgr):
     image_gr[:, :, 1] = image_bgr_copy[:, :, 2] / (
                 image_bgr_copy[:, :, 2] + image_bgr_copy[:, :, 1] + image_bgr_copy[:, :, 2] + 0.0000001)
     return image_gr
+
+def cal_hist_gr(image_gr, bin_size):
+    """
+    Calculate histogram of a **GR** channel image
+    :param image_gr: image (np.array) with two color channel (green, red) value from 0 to 1
+    :param bin_size: the bin size of histogram
+    :return: hist np.2darray with shape (bin_size, bin_size)
+    """
+    return cv2.calcHist([image_gr], [0, 1], None, [bin_size, bin_size], [0, 1, 0, 1])
+
+def normalize(hist):
+    """
+    Normalize the histogram such that the sum of the matrix equal to 1
+    :param hist: histogram np.array
+    :return: normalized
+    """
+    total = np.sum(hist)
+    return np.zeros(hist.shape) if total == 0 else hist / total
