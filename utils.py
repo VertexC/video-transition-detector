@@ -30,3 +30,16 @@ def to_sti_column(cap):
         i += 1
 
     return sti_column
+
+
+def bgr_to_gr(image_bgr):
+    # convert type from uint8 to float
+    image_bgr_copy = np.array(image_bgr, dtype=np.float32) / 256
+    # create new image with only 2 channels (G, R)
+    image_gr = np.zeros((image_bgr.shape[0], image_bgr.shape[1], 2), dtype=np.float32)
+    # + 0.00000001 to avoid divided by zero
+    image_gr[:, :, 0] = image_bgr_copy[:, :, 1] / (
+                image_bgr_copy[:, :, 0] + image_bgr_copy[:, :, 1] + image_bgr_copy[:, :, 2] + 0.0000001)
+    image_gr[:, :, 1] = image_bgr_copy[:, :, 2] / (
+                image_bgr_copy[:, :, 2] + image_bgr_copy[:, :, 1] + image_bgr_copy[:, :, 2] + 0.0000001)
+    return image_gr
