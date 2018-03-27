@@ -3,10 +3,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-def wtf():
-    print("hello")
-
-
 def to_sti_column(cap):
     """
     Extract STI of middle column from a video
