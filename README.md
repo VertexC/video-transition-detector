@@ -44,3 +44,6 @@ See 'Working with Matplotlib on OSX' inthe Matplotlib FAQ for more information.
 #### Conflict between matplotlib && cv2.imshow
 The RuntimeError above occur even if solution applied. 
 Try to use only one of them (matplotlib) to show some image.
+
+#### OpenCV store pixels as BGR.
+

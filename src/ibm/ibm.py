@@ -39,7 +39,9 @@ def rgb_to_chroma(rgb_m):
             if total == 0:
                 chroma_m[i][j] = [0, 0]
             else:
-                chroma_m[i][j][0] = rgb_m[i][j][0] / total
+                # red
+                chroma_m[i][j][0] = rgb_m[i][j][2] / total
+                # green
                 chroma_m[i][j][1] = rgb_m[i][j][1] / total
     return chroma_m
 
@@ -131,14 +133,15 @@ def test(sti):
     :return: void
     """
     row, col = sti.shape
-    # test: print sti as a image
-    sti_img = np.zeros((row, col, 1), dtype=np.uint8)
-    for i in range(row):
-        for f in range(col - 1):
-            sti_img[i, f] = sti[i, f] * 255
-    cv2.imshow('STI', sti_img)
-    k = cv2.waitKey(0)
-    cv2.destroyAllWindows()
+
+    # # test: print sti as a image
+    # sti_img = np.zeros((row, col, 1), dtype=np.uint8)
+    # for i in range(row):
+    #     for f in range(col - 1):
+    #         sti_img[i, f] = sti[i, f] * 255
+    # cv2.imshow('STI', sti_img)
+    # k = cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     X = []
     Y = []
@@ -151,10 +154,7 @@ def test(sti):
     k, c = np.linalg.lstsq(X_one, Y, rcond=-1)[0]
 
     # test: print linear regression result on sti
-    print(k, c)
     plt.figure(1)
-    print(X)
-    print(Y)
     X = np.array(X)
     Y = np.array(Y)
     plt.plot(X, Y, 'bo')
