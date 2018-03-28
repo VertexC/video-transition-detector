@@ -1,5 +1,6 @@
 #Pycharm
 .idea/
+.DS_Store
 
 # IntelliJ
 .idea/
