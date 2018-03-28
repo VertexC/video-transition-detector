@@ -1,1 +1,0 @@
-#### Learn opencv On python
