@@ -1,9 +1,8 @@
 import cv2
 import numpy as np
-import matplotlib as mpl
 
-mpl.use('TkAgg')
-
+import matplotlib
+matplotlib.use("TkAgg")
 
 def pixel_copy_sti(cap, use_row=False):
     """
