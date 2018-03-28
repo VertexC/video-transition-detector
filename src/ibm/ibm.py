@@ -35,11 +35,12 @@ def rgb_to_chroma(rgb_m):
     chroma_m = np.zeros((row, col, 2), dtype=np.double)
     for i in range(row):
         for j in range(col):
-            if sum(rgb_m[i][j][:]) == 0:
+            total = sum(rgb_m[i][j][:])
+            if total == 0:
                 chroma_m[i][j] = [0, 0]
             else:
-                chroma_m[i][j][0] = rgb_m[i][j][0] / sum(rgb_m[i][j][:])
-                chroma_m[i][j][1] = rgb_m[i][j][1] / sum(rgb_m[i][j][:])
+                chroma_m[i][j][0] = rgb_m[i][j][0] / total
+                chroma_m[i][j][1] = rgb_m[i][j][1] / total
     return chroma_m
 
 
@@ -121,20 +122,28 @@ def IBM(video_path, to_chroma=True):
         # print(histogram_vector_table)
         print("frame:%d" % f)
         f += 1
+    return sti
 
-    # # test: print sti as a image
-    # sti_img = np.zeros((width, frame_count - 1, 1), dtype=np.uint8)
-    # for i in range(width):
-    #     for f in range(frame_count - 1):
-    #         sti_img[i, f] = sti[i, f] * 255
-    # cv2.imshow('STI', sti_img)
-    # k = cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+def test(sti):
+    """
+    apply test on result sti
+    :param sti:
+    :return: void
+    """
+    row, col = sti.shape
+    # test: print sti as a image
+    sti_img = np.zeros((row, col, 1), dtype=np.uint8)
+    for i in range(row):
+        for f in range(col - 1):
+            sti_img[i, f] = sti[i, f] * 255
+    cv2.imshow('STI', sti_img)
+    k = cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     X = []
     Y = []
-    for f in range(frame_count - 1):
-        for i in range(width):
+    for i in range(row):
+        for f in range(col):
             if sti[i, f] > 0.1:
                 X.append(f)
                 Y.append(i)
@@ -153,16 +162,7 @@ def IBM(video_path, to_chroma=True):
     plt.show()
 
 
-# apply histogram
 if __name__ == '__main__':
-    # X = [1, 2, 3]
-    # Y = [4, 5, 6]
-    # plt.figure(1)
-    # k = 1
-    # c = 2
-    # plt.plot(X, Y, 'bo')
-    # plt.plot(X, X, 'r--')
-    # plt.show()
-
-    video_path = './media/left_wipe.avi'
-    IBM(video_path)
+    video_path = '../../media/left_wipe.avi'
+    sti = IBM(video_path)
+    test(sti)
