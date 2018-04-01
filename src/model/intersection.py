@@ -8,6 +8,8 @@ class IntersectionDetector(Detector):
     ACCEPTED_MODE = ['column', 'row']
     mode = 'column'
     cap = None
+
+    detect_result = None
     
     def set_mode(self, to_chromatic=True, to_col=True):
         self.to_chromatic = to_chromatic
@@ -159,8 +161,8 @@ class IntersectionDetector(Detector):
         plt.show()
         start, end = np.round(sorted(frames_pred.flatten()))
         sqr_error = mean_squared_error(wipe_frames, regr.predict(wipe_positions))
-        print("start/end frame: {}/{}".format(start, end))
-        print("Mean Square Error: {}".format(sqr_error))
+        # print("start/end frame: {}/{}".format(start, end))
+        # print("Mean Square Error: {}".format(sqr_error))
 
         direction = None
 
@@ -171,7 +173,7 @@ class IntersectionDetector(Detector):
 
         return direction, start, end, sqr_error
 
-    def detect(self):
+    def detect_one(self):
         self.cap = cv2.VideoCapture(self.video_path)
         if not self.cap.isOpened():
             raise FileNotFoundError('File {} not found'.format(self.video_path))
@@ -200,7 +202,7 @@ class IntersectionDetector(Detector):
         wipe_positions, wipe_frames = self.intersection(stis_rg, threshold)
 
         number = wipe_positions.shape[0]
-        print("The number of transition detected: {}".format(number))
+        # print("The number of transition detected: {}".format(number))
 
         message = ''
 
@@ -220,4 +222,49 @@ class IntersectionDetector(Detector):
 
         direction, start, end, sqr_error = self.linear_regression_column(wipe_positions, wipe_frames, width_or_height)
 
-        return DetectResult(self.mode, direction, start, end, message)
+        return DetectResult(self.mode, direction, abs(number - width_or_height), start, end, message)
+
+    def show_frame(self, frame):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
+        ret, some_frame = self.cap.read()
+        plt.imshow(cv2.cvtColor(some_frame, cv2.COLOR_BGR2RGB))
+        plt.show()
+
+
+    def show_result(self):
+
+
+        if not self.detect_result:
+            print("No result detected")
+            return
+        if not self.cap.isOpened():
+            self.cap = cv2.VideoCapture(self.video_path)
+
+        start = self.detect_result.start_frame
+        end = self.detect_result.end_frame
+        self.show_frame(start)
+        self.show_frame((start + end) // 2)
+        self.show_frame(end)
+
+
+
+
+
+    def detect(self):
+        best_result = None
+        for mode in self.ACCEPTED_MODE:
+            self.mode = mode
+            try:
+                detect_result = self.detect_one()
+            except ValueError:
+                continue
+            if best_result == None:
+                best_result = detect_result
+            elif best_result.detected_error > detect_result.detected_error:
+                best_result = detect_result
+        self.detect_result = best_result
+        return best_result
+
+
+
+
