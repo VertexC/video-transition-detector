@@ -1,25 +1,6 @@
-import cv2
-import numpy as np
-import math
-import matplotlib
-matplotlib.use("TkAgg")
-from matplotlib import pyplot as plt
+from ..detector import *
 
-class IBM:
-    video_path = ""
-    to_chromatic = True
-    to_col = True
-    sti = np.zeros((1, 1))
-
-    def __init__(self):
-        pass
-
-    def set_video(self, path):
-        self.video_path = path
-
-    def set_mode(self, to_chromatic=True, to_col=True):
-        self.to_chromatic = to_chromatic
-        self.to_col = to_col
+class IBM(Detector):
 
     def rgb_to_chroma(self, rgb_m):
         """
@@ -121,8 +102,6 @@ class IBM:
         # sampling
         while True:
             ret, frame = cap.read()
-            if not cap.isOpened():
-                raise FileNotFoundError('File {} not found'.format(self.video_path))
             if not ret:
                 cap.release()
                 break

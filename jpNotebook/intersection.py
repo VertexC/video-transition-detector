@@ -5,6 +5,7 @@ import math
 from matplotlib import pyplot as plt
 from .utils import *
 
+
 def intersection_method(video_path, mode, threshold=0.5):
     """
 
