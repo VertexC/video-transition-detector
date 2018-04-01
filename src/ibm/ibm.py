@@ -1,13 +1,10 @@
 import cv2
-
 import numpy as np
 import math
-
 import matplotlib
 
 matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
-
 
 class IBM:
     video_path = ""
@@ -42,17 +39,24 @@ class IBM:
         chroma_m = np.zeros((row, col, 2), dtype=np.double)
         for i in range(row):
             for j in range(col):
-                total = sum(rgb_m[i][j][:])
-                if total < 15:
-                    chroma_m[i][j] = [0, 0]
+                if self.to_chromatic:
+                    total = sum(rgb_m[i][j][:])
+                    if total < 15:
+                        chroma_m[i][j] = [0, 0]
+                    else:
+                        # red
+                        chroma_m[i][j][0] = rgb_m[i][j][2] / total
+                        # green
+                        chroma_m[i][j][1] = rgb_m[i][j][1] / total
                 else:
                     # red
-                    chroma_m[i][j][0] = rgb_m[i][j][2] / total
+                    chroma_m[i][j][0] = rgb_m[i][j][2]
                     # green
-                    chroma_m[i][j][1] = rgb_m[i][j][1] / total
+                    chroma_m[i][j][1] = rgb_m[i][j][1]
+
         return chroma_m
 
-    def to_histogram(slef, col_chroma, n):
+    def to_histogram(self, col_chroma, n):
         """
         :param col_chroma: shape(n,2), all element in col_chroma should be in [0,1]
         :param n: number of bins
@@ -68,9 +72,13 @@ class IBM:
             print("Error: Invalid channel number. Expect 2")
             exit(1)
         histogram = np.zeros((n, n))
+        if self.to_chromatic:
+            color_range = 1
+        else:
+            color_range = 255
         for i in range(row):
-            r = int(col_chroma[i][0] * (n - 1))
-            g = int(col_chroma[i][1] * (n - 1))
+            r = int(col_chroma[i][0] * (n - 1) / color_range)
+            g = int(col_chroma[i][1] * (n - 1) / color_range)
             histogram[r][g] += 1
         total = np.sum(histogram)
         return np.true_divide(histogram, total)
@@ -111,13 +119,13 @@ class IBM:
 
         histogram_vector_table = []
         f = 0
-
         # sampling
         while True:
             ret, frame = cap.read()
             if not ret:
                 cap.release()
                 break
+
             frame_resize = cv2.resize(frame, (FRAME_WIDTH, FRAME_HEIGHT), interpolation=cv2.INTER_CUBIC)
             frame_chroma = self.rgb_to_chroma(frame_resize)
             if self.to_col:
@@ -131,10 +139,6 @@ class IBM:
                         z = np.abs(v - v_last)
                         d_2 = (np.asmatrix(z) * np.asmatrix(a_m) * np.asmatrix(z).T)[0, 0]
 
-                        # if d_2 > 0.2:
-                        #     print(z)
-
-                        # update table
                         histogram_vector_table[col] = v[:]
                         sti[col, f - 1] = d_2
             else:
@@ -148,10 +152,6 @@ class IBM:
                         z = np.abs(v - v_last)
                         d_2 = (np.asmatrix(z) * np.asmatrix(a_m) * np.asmatrix(z).T)[0, 0]
 
-                        # if d_2 > 0.2:
-                        #     print(z)
-
-                        # update table
                         histogram_vector_table[row] = v[:]
                         sti[row, f - 1] = d_2
 
@@ -180,9 +180,13 @@ class IBM:
 
         X = []
         Y = []
+        if self.to_chromatic:
+            threshold = 0.25
+        else:
+            threshold = 0.5
         for f in range(col):
             for i in range(row):
-                if self.sti[i, f] > 0.25:
+                if self.sti[i, f] > threshold:
                     if self.to_col:
                         print("at f:%d, col%d, sti:%f" % (f, i, self.sti[i, f]))
                     else:
@@ -237,18 +241,24 @@ if __name__ == '__main__':
     # video_path = '../../media/video_1_horizontal_wipe.mp4'
     # video_path = '../../media/video_2_horizontal_wipe.mp4'
     # video_path = '../../media/video_1_vertical_wipe.mp4'
-    # video_path = '../../media/video_2_vertical_wipe.mp4'
-    video_path = '../../media/video_3_down_wipe.mp4'
+    video_path = '../../media/video_2_vertical_wipe.mp4'
+    # video_path = '../../media/video_3_down_wipe.mp4'
     # video_path = '../../media/video_4_left_wipe.mp4'
     # video_path = '../../media/video_4_up_wipe.mp4'
-
+    # video_path = '../../media/video_3_left_down_wipe.mp4'
 
     to_chroma = True
+
+    #q model = IBM()
+    # model.set_video(video_path)
+    # model.set_mode(to_chromatic=to_chroma, to_col=True)
+    # if not model.detect():
+    #     model.set_mode(to_chromatic=to_chroma, to_col=False)
+    #     model.detect()
 
     model = IBM()
     model.set_video(video_path)
     model.set_mode(to_chromatic=to_chroma, to_col=True)
-    if not model.detect():
-        model.set_mode(to_chromatic=to_chroma, to_col=False)
-        model.detect()
-
+    model.detect()
+    model.set_mode(to_chromatic=to_chroma, to_col=False)
+    model.detect()
