@@ -1,5 +1,5 @@
-from .detector import *
-from .detectresult import DetectResult
+from src.model.detector import *
+from src.model.detectresult import DetectResult
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error
 
@@ -207,6 +207,7 @@ class IntersectionDetector(Detector):
         if number < width // 2:
             message += "Warning: too few valid positions are detected. The result may be inaccurate.\n"
             message += "Try to increase the threshold\n"
+
         if number > width * 2:
             message += "Warning: too many valid positions are detected. The result may be inaccurate."
             message += "Try to decrease the threshold"

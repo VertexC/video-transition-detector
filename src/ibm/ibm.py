@@ -92,6 +92,9 @@ class IBM:
         FRAME_HEIGHT = 32
 
         cap = cv2.VideoCapture(self.video_path)
+        if not cap.isOpened():
+            raise FileNotFoundError('File {} not found'.format(self.video_path))
+
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         height = FRAME_HEIGHT
         width = FRAME_WIDTH
@@ -121,8 +124,6 @@ class IBM:
         # sampling
         while True:
             ret, frame = cap.read()
-            if not cap.isOpened():
-                raise FileNotFoundError('File {} not found'.format(self.video_path))
             if not ret:
                 cap.release()
                 break

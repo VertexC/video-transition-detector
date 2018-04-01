@@ -1,6 +1,6 @@
-from ..detector import *
+from src.model.detector import *
 
-class IBM(Detector):
+class IbmDetector(Detector):
 
     def rgb_to_chroma(self, rgb_m):
         """
@@ -214,31 +214,3 @@ class IBM(Detector):
 
     def __str__(self):
         return "method: IBM, to_chromatic: " + str(self.to_chromatic) + ", to_col: " + str(self.to_col)
-
-
-if __name__ == '__main__':
-    # video_path = '../../media/left_wipe.avi'
-    # video_path = '../../media/video_1_horizontal_wipe.mp4'
-    # video_path = '../../media/video_2_horizontal_wipe.mp4'
-    # video_path = '../../media/video_1_vertical_wipe.mp4'
-    video_path = '../../media/video_2_vertical_wipe.mp4'
-    # video_path = '../../media/video_3_down_wipe.mp4'
-    # video_path = '../../media/video_4_left_wipe.mp4'
-    # video_path = '../../media/video_4_up_wipe.mp4'
-    # video_path = '../../media/video_3_left_down_wipe.mp4'
-
-    to_chroma = True
-
-    #q model = IBM()
-    # model.set_video(video_path)
-    # model.set_mode(to_chromatic=to_chroma, to_col=True)
-    # if not model.detect():
-    #     model.set_mode(to_chromatic=to_chroma, to_col=False)
-    #     model.detect()
-
-    model = IBM()
-    model.set_video(video_path)
-    model.set_mode(to_chromatic=to_chroma, to_col=True)
-    model.detect()
-    model.set_mode(to_chromatic=to_chroma, to_col=False)
-    model.detect()
