@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import math
+from sklearn import linear_model
+from sklearn.metrics import mean_squared_error
 
 ACCEPTED_MODE = ['column', 'row']
 
@@ -118,14 +120,6 @@ def intersection(stis_rg, threshold):
                 wipe_frames.append(f)
     #             print("Wipe at: {}".format(f + 1))
 
-    number = len(wipe_positions)
-    print("The number of transition detected: {}".format(number))
-    if number < width // 2:
-        print("Warning: too few valid positions are detected. The result may be inaccurate.")
-        print("Try to increase the threshold")
-    if number > width * 2:
-        print("Warning: too many valid positions are detected. The result may be inaccurate.")
-        print("Try to decrease the threshold")
 
     wipe_positions = np.array(wipe_positions).reshape(-1, 1)
     wipe_frames = np.array(wipe_frames).reshape(-1, 1)
@@ -147,8 +141,6 @@ def linear_regression_column(wipe_positions, wipe_frames, width_or_height):
     if wipe_positions.shape[0] == 0:
         raise ValueError("The number of data should be greater than zero")
 
-    from sklearn import linear_model
-    from sklearn.metrics import mean_squared_error
     regr = linear_model.LinearRegression()
     regr.fit(wipe_positions, wipe_frames)
     positions_test = np.array([0, width_or_height - 1]).reshape(-1, 1)
@@ -162,5 +154,11 @@ def linear_regression_column(wipe_positions, wipe_frames, width_or_height):
     # plt.yticks(())
 
     plt.show()
-    print("start/end frame: {}".format(np.round(sorted(frames_pred.flatten()))))
-    print("Mean Square Error: {}".format(mean_squared_error(wipe_frames, regr.predict(wipe_positions))))
+    start, end = np.round(sorted(frames_pred.flatten()))
+    sqr_error = mean_squared_error(wipe_frames, regr.predict(wipe_positions))
+    print("start/end frame: {}/{}".format(start, end))
+    print("Mean Square Error: {}".format(sqr_error))
+
+    return start, end, sqr_error
+
+
