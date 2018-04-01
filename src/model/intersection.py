@@ -3,19 +3,19 @@ from src.model.detectresult import DetectResult
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error
 
+
 class IntersectionDetector(Detector):
-    
     ACCEPTED_MODE = ['column', 'row']
     mode = 'column'
     cap = None
 
     detect_result = None
-    
+
     def set_mode(self, to_chromatic=True, to_col=True):
         self.to_chromatic = to_chromatic
         self.to_col = to_col
         self.mode = 'column' if to_col else 'row'
-    
+
     def to_sti(self, column_or_row_num=0):
         """
         Extract STI of given column or row from a video
@@ -167,9 +167,9 @@ class IntersectionDetector(Detector):
         direction = None
 
         if self.mode == 'column':
-            direction = 'left' if frames_pred[1] - frames_pred[0] < 0 else 'right'
+            direction = 'move left' if frames_pred[1] - frames_pred[0] < 0 else 'move right'
         elif self.mode == 'row':
-            direction = 'up' if frames_pred[1] - frames_pred[0] < 0 else 'down'
+            direction = 'move up' if frames_pred[1] - frames_pred[0] < 0 else 'move down'
 
         return direction, start, end, sqr_error
 
@@ -222,7 +222,8 @@ class IntersectionDetector(Detector):
 
         direction, start, end, sqr_error = self.linear_regression_column(wipe_positions, wipe_frames, width_or_height)
 
-        return DetectResult(self.mode, direction, abs(number - width_or_height), start, end, message)
+        type = "horizontal" if self.mode == "col" else "vertical"
+        return DetectResult(type, direction, abs(number - width_or_height), start, end, message)
 
     def show_frame(self, frame):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
@@ -230,9 +231,7 @@ class IntersectionDetector(Detector):
         plt.imshow(cv2.cvtColor(some_frame, cv2.COLOR_BGR2RGB))
         plt.show()
 
-
     def show_result(self):
-
 
         if not self.detect_result:
             print("No result detected")
@@ -245,10 +244,6 @@ class IntersectionDetector(Detector):
         self.show_frame(start)
         self.show_frame((start + end) // 2)
         self.show_frame(end)
-
-
-
-
 
     def detect(self):
         best_result = None
@@ -264,7 +259,3 @@ class IntersectionDetector(Detector):
                 best_result = detect_result
         self.detect_result = best_result
         return best_result
-
-
-
-

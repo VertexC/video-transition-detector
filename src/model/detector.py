@@ -1,5 +1,5 @@
 import cv2
-
+from src.model.detectresult import DetectResult
 import numpy as np
 import math
 
@@ -23,9 +23,8 @@ class Detector:
     def set_video(self, path):
         self.video_path = path
 
-    def set_mode(self, to_chromatic=True, to_col=True):
+    def set_mode(self, to_chromatic=True):
         self.to_chromatic = to_chromatic
-        self.to_col = to_col
 
     def set_threshold(self, threshold):
         self.threshold = threshold

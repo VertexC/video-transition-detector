@@ -1,6 +1,29 @@
 from src.model.detector import *
 
+
 class IbmDetector(Detector):
+    detect_result = None
+    threshold = 0.25
+    cap = None
+
+    def show_frame(self, frame):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
+        ret, some_frame = self.cap.read()
+        plt.imshow(cv2.cvtColor(some_frame, cv2.COLOR_BGR2RGB))
+        plt.show()
+
+    def show_result(self):
+        if not self.detect_result:
+            print("No result detected")
+            return
+        if not self.cap.isOpened():
+            self.cap = cv2.VideoCapture(self.video_path)
+
+        start = self.detect_result.start_frame
+        end = self.detect_result.end_frame
+        self.show_frame(start)
+        self.show_frame((start + end) // 2)
+        self.show_frame(end)
 
     def rgb_to_chroma(self, rgb_m):
         """
@@ -73,10 +96,16 @@ class IbmDetector(Detector):
         FRAME_HEIGHT = 32
 
         cap = cv2.VideoCapture(self.video_path)
+        cap = cv2.VideoCapture(self.video_path)
+        if not cap.isOpened():
+            raise FileNotFoundError('File {} not found'.format(self.video_path))
+        self.cap = cap
+
         frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         height = FRAME_HEIGHT
         width = FRAME_WIDTH
-        print(frame_count)
+        # print(frame_count)
+
         # initialize
 
         # bin of histogram
@@ -136,7 +165,7 @@ class IbmDetector(Detector):
                         sti[row, f - 1] = d_2
 
             # print(histogram_vector_table)
-            print("frame:%d" % f)
+            # print("frame:%d" % f)
             f += 1
             # set sti
             self.sti = sti
@@ -161,16 +190,16 @@ class IbmDetector(Detector):
         X = []
         Y = []
         if self.to_chromatic:
-            threshold = 0.25
+            self.threshold = 0.25
         else:
-            threshold = 0.5
+            self.threshold = 0.6
         for f in range(col):
             for i in range(row):
-                if self.sti[i, f] > threshold:
-                    if self.to_col:
-                        print("at f:%d, col%d, sti:%f" % (f, i, self.sti[i, f]))
-                    else:
-                        print("at f:%d, row%d, sti:%f" % (f, i, self.sti[i, f]))
+                if self.sti[i, f] > self.threshold:
+                    # if self.to_col:
+                    #     print("at f:%d, col%d, sti:%f" % (f, i, self.sti[i, f]))
+                    # else:
+                    #     print("at f:%d, row%d, sti:%f" % (f, i, self.sti[i, f]))
                     X.append(f)
                     Y.append(i)
 
@@ -180,22 +209,25 @@ class IbmDetector(Detector):
             X_one = np.vstack([np.asarray(X), np.ones(len(X))]).T
             args, residuals = np.linalg.lstsq(X_one, Y, rcond=-1)[:2]
             k, c = args
-            print(residuals)
-            print("wipe detected, direction:[", end="")
+
+            # set result message
             if self.to_col:
-                print("vertical,", end="")
+                type = "horizontal"
                 if k < 0:
-                    print("move-left", end="")
+                    direction = "move left"
                 else:
-                    print("move-right", end="")
+                    direction = "move right"
             else:
-                print("horizontal,", end="")
+                type = "vertical"
                 if k < 0:
-                    print("move-up", end="")
+                    direction = "move up"
                 else:
-                    print("move-down", end="")
-            print("], ", end="")
-            print("from frame: %d to %d" % (X[0], X[-1]))
+                    direction = "move down"
+            error = residuals[0]
+            start_frame = X[0]
+            end_frame = X[-1]
+            self.detect_result = DetectResult(type, direction, error, start_frame, end_frame)
+
             # test: print linear regression result on sti
             plt.figure(1)
             X = np.array(X)
@@ -203,14 +235,53 @@ class IbmDetector(Detector):
             plt.plot(X, Y, 'bo')
             plt.plot(X, k * X + c, 'r--')
             plt.show()
+
             return True
 
     def detect(self):
         self.ibm()
         if self.linear_regression():
-            return True
+            return self.detect_result
         else:
-            return False
+            self.to_col = not self.to_col
+            self.ibm()
+            if self.linear_regression():
+                return self.detect_result
+            else:
+                # set result message
+                self.result = DetectResult(None, None, None, None, None, message="Wipe not detected.")
 
     def __str__(self):
         return "method: IBM, to_chromatic: " + str(self.to_chromatic) + ", to_col: " + str(self.to_col)
+
+
+if __name__ == '__main__':
+    from src.model.intersection import IntersectionDetector
+
+
+    def test_intersection_method():
+        # video_path = 'media/left_wipe.avi'
+        # video_path = 'media/video_1_horizontal_wipe.mp4'
+        # video_path = 'media/video_2_horizontal_wipe.mp4'
+        # video_path = 'media/video_1_vertical_wipe.mp4'
+        # video_path = 'media/video_2_vertical_wipe.mp4'
+        # video_path = 'media/video_3_down_wipe.mp4'
+        video_path = '../../media/video_4_left_wipe.mp4'
+        # video_path = '../../media/video_4_up_wipe.mp4'
+
+        to_chroma = False
+
+        model = IbmDetector()
+        model.set_video(video_path)
+        model.set_mode(to_chromatic=to_chroma)
+        model.set_threshold(0.5)
+        detect_result = model.detect()
+        if detect_result == None:
+            print("No transition detected")
+        else:
+            print(detect_result)
+            model.show_result()
+
+
+    if __name__ == '__main__':
+        test_intersection_method()

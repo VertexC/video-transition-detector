@@ -15,7 +15,7 @@ def test_intersection_method():
 
     model = IntersectionDetector()
     model.set_video(video_path)
-    model.set_mode(to_chromatic=to_chroma, to_col=True)
+    model.set_mode(to_chromatic=to_chroma)
     model.set_threshold(0.5)
     detect_result = model.detect()
     if detect_result == None:
