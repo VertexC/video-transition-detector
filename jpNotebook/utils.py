@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+import math
 
 
 def to_sti_column(cap, column_num=0):
@@ -61,3 +62,56 @@ def normalize(hist):
     """
     total = np.sum(hist)
     return np.zeros(hist.shape) if total == 0 else hist / total
+
+def intersection(sti_columns_rg, threshold):
+    width, height, frame_count = sti_columns_rg.shape[:3]
+    bin_size = 1 + math.floor(math.log(height, 2))
+
+    H = np.ndarray((width, frame_count, bin_size, bin_size))
+
+    # compute hist for one column from STI
+    for col in range(width):
+        for f in range(frame_count):
+            H[col, f] = normalize(cal_hist_rg(sti_columns_rg[col, :, f:f + 1, :], bin_size))
+
+    # create np.1darray for histogram intersection
+    I = np.ndarray((width, frame_count - 1))
+
+    # contruct the column * frame graph
+    wipe_cols = []
+    wipe_frames = []
+
+    # collect all col, frame of wipe transitions
+    for col in range(width):
+        #     print("in column: {}".format(col))
+        for f in range(I.shape[1]):
+            # I[i] intersects histogram of frames at time i+1 and i
+            I[col, f] = np.sum(np.minimum(H[col, f + 1], H[col, f]))
+            # TODO: add cooldown time to avoid several continuous frames are all regraded as wipe
+            if I[col, f] < threshold:
+                wipe_cols.append(col)
+                wipe_frames.append(f)
+    #             print("Wipe at: {}".format(f + 1))
+
+    wipe_cols = np.array(wipe_cols).reshape(-1, 1)
+    wipe_frames = np.array(wipe_frames).reshape(-1, 1)
+
+    return wipe_cols, wipe_frames
+
+def linear_regression_column(wipe_cols, wipe_frames, width):
+    from sklearn import linear_model
+
+    regr = linear_model.LinearRegression()
+    regr.fit(wipe_cols, wipe_frames)
+
+    cols_test = np.array([0, width - 1]).reshape(-1, 1)
+    frames_pred = regr.predict(cols_test)
+
+    plt.scatter(wipe_cols, wipe_frames, color='black', linewidths=1)
+    plt.plot(cols_test, frames_pred, color='blue', linewidth=3)
+
+    # plt.xticks(())
+    # plt.yticks(())
+
+    plt.show()
+    print("start/end frame: {}".format(np.round(sorted(frames_pred.flatten()))))
