@@ -197,19 +197,21 @@ class IBM:
             args, residuals = np.linalg.lstsq(X_one, Y, rcond=-1)[:2]
             k, c = args
             print(residuals)
-            print("wipe detected, direction:", end="")
+            print("wipe detected, direction:[", end="")
             if self.to_col:
                 print("vertical,", end="")
                 if k < 0:
-                    print("move-left")
+                    print("move-left", end="")
                 else:
-                    print("move-right")
+                    print("move-right", end="")
             else:
                 print("horizontal,", end="")
                 if k < 0:
-                    print("move-up")
+                    print("move-up", end="")
                 else:
-                    print("move-down")
+                    print("move-down", end="")
+            print("], ", end="")
+            print("from frame: %d to %d" % (X[0], X[-1]))
             # test: print linear regression result on sti
             plt.figure(1)
             X = np.array(X)
