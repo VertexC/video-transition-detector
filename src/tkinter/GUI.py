@@ -1,7 +1,10 @@
+from src.model import *
+from src.util import utils
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
+
 # global variable
 video_file = None
 to_chromatic = True
@@ -115,6 +118,12 @@ def detection():
         # warning dialog
         messagebox.showinfo("Warning", "Please select a sampling mode.")
         return
+    # pixel sampling
+    if sample_mode == "row":
+        sti = utils.pixel_copy_sti(video_file, use_row=True)
+    else:
+        sti = utils.pixel_copy_sti(video_file, use_row=False)
+
 
 
 tk.Button(copypixel_page,

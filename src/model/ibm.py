@@ -96,7 +96,6 @@ class IbmDetector(Detector):
         FRAME_HEIGHT = 32
 
         cap = cv2.VideoCapture(self.video_path)
-        cap = cv2.VideoCapture(self.video_path)
         if not cap.isOpened():
             raise FileNotFoundError('File {} not found'.format(self.video_path))
         self.cap = cap
@@ -121,10 +120,14 @@ class IbmDetector(Detector):
                 a_m[i, j] = 1 - math.sqrt((xi / n - xj / n) ** 2 + (yi / n - yj / n) ** 2) / math.sqrt(2)
 
         # initialize sti
-        if self.to_col:
-            sti = np.zeros((width, frame_count - 1), dtype=np.double)
-        else:
-            sti = np.zeros((height, frame_count - 1), dtype=np.double)
+        try:
+            if self.to_col:
+                sti = np.zeros((width, frame_count - 1), dtype=np.double)
+            else:
+                sti = np.zeros((height, frame_count - 1), dtype=np.double)
+        except ValueError:
+            print("Invalid Video Type")
+            exit(1)
 
         histogram_vector_table = []
         f = 0

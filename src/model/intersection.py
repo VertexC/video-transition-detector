@@ -183,14 +183,18 @@ class IntersectionDetector(Detector):
         frame_count = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
         # convert each column/row to STI
-        if self.mode == 'row':
-            stis = np.ndarray((height, width, frame_count, 3), dtype=np.uint8)
-            for i in range(height):
-                stis[i] = self.to_sti(i)
-        elif self.mode == 'column':
-            stis = np.ndarray((width, height, frame_count, 3), dtype=np.uint8)
-            for i in range(width):
-                stis[i] = self.to_sti(i)
+        try:
+            if self.mode == 'row':
+                stis = np.ndarray((height, width, frame_count, 3), dtype=np.uint8)
+                for i in range(height):
+                    stis[i] = self.to_sti(i)
+            elif self.mode == 'column':
+                stis = np.ndarray((width, height, frame_count, 3), dtype=np.uint8)
+                for i in range(width):
+                    stis[i] = self.to_sti(i)
+        except ValueError:
+            print("Invalid Video Type.")
+            exit(1)
 
         # BGR -> GR
         stis_rg = np.ndarray(list(stis.shape[:-1]) + [2], dtype=np.float32)
