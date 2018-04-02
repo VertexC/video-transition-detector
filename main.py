@@ -220,7 +220,7 @@ class CopyPixelPage(Page):
 
         tk.Button(self, text='Select Video File',
                   width=4, height=1,
-                  command=select_file).grid(row=5, column=0, rowspan=1, columnspan=4, sticky='NESW')
+                  command=select_file).grid(row=5, column=0, rowspan=1, columnspan=4, sticky='NESW', padx=10)
 
         # File Selected Text
         tk.Label(self, textvariable=path_var,
@@ -243,11 +243,11 @@ class CopyPixelPage(Page):
         row_choice = tk.Radiobutton(self, text='MidRow Sampling',
                                     variable=var, value='row',
                                     command=samling_mode_set)
-        row_choice.grid(row=20, column=0, rowspan=3, columnspan=4, sticky="NESW", padx=0)
+        row_choice.grid(row=20, column=0, rowspan=3, columnspan=4, sticky="NESW", padx=10)
         col_choice = tk.Radiobutton(self, text='MidCol Sampling',
                                     variable=var, value='col',
                                     command=samling_mode_set)
-        col_choice.grid(row=23, column=0, rowspan=3, columnspan=4, sticky="NESW", padx=0)
+        col_choice.grid(row=23, column=0, rowspan=3, columnspan=4, sticky="NESW", padx=10)
 
         # label to show sti image
         IMAGE_WIDTH = 200
@@ -287,7 +287,8 @@ class CopyPixelPage(Page):
 
         tk.Button(self,
                   text="Start Detection",
-                  width=10, height=2, command=detection).grid(row=35, column=0, rowspan=1, columnspan=4, sticky="NESW")
+                  width=10, height=2, command=detection).grid(row=35, column=0, rowspan=1, columnspan=4, sticky="NESW",
+                                                              padx=10)
 
 
 class NoteBook(tk.Frame):
