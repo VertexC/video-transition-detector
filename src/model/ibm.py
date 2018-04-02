@@ -255,7 +255,8 @@ class IbmDetector(Detector):
                 return self.detect_result
             else:
                 # set result message
-                self.result = DetectResult(None, None, None, None, None, message="Wipe not detected.")
+                self.detect_result = None
+                return self.detect_result
 
     def __str__(self):
         return "method: IBM, to_chromatic: " + str(self.to_chromatic) + ", to_col: " + str(self.to_col)

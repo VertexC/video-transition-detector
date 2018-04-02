@@ -13,11 +13,10 @@ import math
 import matplotlib
 from PIL import Image, ImageTk
 
-
-
 # global variable
 video_file = None
 sample_mode = None
+
 
 class FileChooser():
     path_var = None
@@ -56,7 +55,6 @@ class Page(tk.Frame):
 
 
 class LabelImageCombo(tk.Frame):
-
     IMAGE_WIDTH = 150
     IMAGE_HEIGHT = 150
 
@@ -87,19 +85,32 @@ class HistogramDifferenceResultFrame(tk.Frame):
         detector.set_video(video_path)
         detector.set_threshold(threshold)
         detect_result = detector.detect()
-        # TODO: update result in tk
-        # Summary
-        self.result_text.set("{} | {}".format(detect_result.transition_type, detect_result.transition_direction))
+        if detect_result is not None:
+            # TODO: update result in tk
+            # Summary
+            self.result_text.set(
+                "Wipe: {} | {}".format(detect_result.transition_type, detect_result.transition_direction))
 
-        # start
-        self.start_frame.set_image(detect_result.start_frame_image)
-        self.start_frame.set_label("Transition Starts at {}th frame".format(detect_result.start_frame_no))
-        # middle
-        self.middle_frame.set_image(detect_result.middle_frame_image)
-        self.middle_frame.set_label("Transition middle at {}th frame".format((detect_result.start_frame_no + detect_result.end_frame_no)//2))
-        # end
-        self.end_frame.set_image(detect_result.end_frame_image)
-        self.end_frame.set_label("Transition ends at {}th frame".format(detect_result.end_frame_no))
+            # start
+            self.start_frame.set_image(detect_result.start_frame_image)
+            self.start_frame.set_label("Transition Starts at {}th frame".format(detect_result.start_frame_no))
+            # middle
+            self.middle_frame.set_image(detect_result.middle_frame_image)
+            self.middle_frame.set_label("Transition middle at {}th frame".format(
+                (detect_result.start_frame_no + detect_result.end_frame_no) // 2))
+            # end
+            self.end_frame.set_image(detect_result.end_frame_image)
+            self.end_frame.set_label("Transition ends at {}th frame".format(detect_result.end_frame_no))
+            # pack them
+            self.result_header.pack()
+            self.start_frame.pack()
+            self.middle_frame.pack()
+            self.end_frame.pack()
+        else:
+            self.result_text.set("Transition not detected.")
+            self.start_frame.pack_forget()
+            self.middle_frame.pack_forget()
+            self.end_frame.pack_forget()
 
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
@@ -134,6 +145,7 @@ class HistogramDifferencePage(Page):
     def intersection_detect(self):
         # accumulate parameters and send to sub detectors
         self.detect(self.intersection_detector)
+
     def ibm_detect(self):
         # accumulate parameters and send to sub detectors
         self.detect(self.ibm_detector)
@@ -149,10 +161,10 @@ class HistogramDifferencePage(Page):
         self.file_chooser = FileChooser()
         file_chooser_label = tk.Label(self, text="Video file")
         file_chooser_button = tk.Button(self, text='Select video file',
-                  width=8, height=1,
-                  command=self.file_chooser.choose_file)
+                                        width=8, height=1,
+                                        command=self.file_chooser.choose_file)
         file_chooser_path_label = tk.Label(self, textvariable=self.file_chooser.path_var,
-                 width=8, height=2)
+                                           width=8, height=2)
 
         file_chooser_label.grid(row=1, column=0, columnspan=4, padx=(30, 10), pady=(40, 20))
         file_chooser_button.grid(row=1, column=4, rowspan=1, columnspan=8,
@@ -291,6 +303,7 @@ class NoteBook(tk.Frame):
         histogram_difference_page = HistogramDifferencePage(nb)
         nb.add(histogram_difference_page, text='Histogram Difference')
 
+
 class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
@@ -301,7 +314,6 @@ class MainApplication(tk.Frame):
             self.columnconfigure(rows, weight=1)
             rows += 1
 
-
         label_introduction = tk.Label(self,
                                       text=" Author: Bowen Chen | Haipeng Li",
                                       # bg='green',
@@ -311,7 +323,6 @@ class MainApplication(tk.Frame):
 
         body = NoteBook(self)
         body.grid(row=20, column=0, rowspan=60, columnspan=80, sticky='NESW')
-
 
 
 if __name__ == "__main__":
