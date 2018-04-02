@@ -89,7 +89,7 @@ class IntersectionDetector(Detector):
         total = np.sum(hist)
         return np.zeros(hist.shape) if total == 0 else hist / total
 
-    def intersection(self, stis_rg, threshold):
+    def intersection(self, stis_rg):
         """
         Use STI made of columns to generate all the transitions (position, time).
         Though is function is written for STI of columns, but it also works for rows
@@ -120,7 +120,7 @@ class IntersectionDetector(Detector):
             for f in range(I.shape[1]):
                 # I[i] intersects histogram of frames at time i+1 and i
                 I[col, f] = np.sum(np.minimum(H[col, f + 1], H[col, f]))
-                if I[col, f] < threshold:
+                if I[col, f] < self.threshold:
                     wipe_positions.append(col)
                     wipe_frames.append(f)
         #             print("Wipe at: {}".format(f + 1))
@@ -195,33 +195,32 @@ class IntersectionDetector(Detector):
             print("Invalid Video Type.")
             exit(1)
 
+        #
+        if self.mode == 'column':
+            width_or_height = width
+        elif self.mode == 'row':
+            width_or_height = height
+
         # BGR -> GR
         stis_rg = np.ndarray(list(stis.shape[:-1]) + [2], dtype=np.float32)
-        for i in range(width):
+        for i in range(width_or_height):
             stis_rg[i] = self.bgr_to_rg(stis[i])
 
         # implements histogram intersection on GR color channels
-        threshold = 0.8
-        wipe_positions, wipe_frames = self.intersection(stis_rg, threshold)
+        wipe_positions, wipe_frames = self.intersection(stis_rg)
 
         number = wipe_positions.shape[0]
         # print("The number of transition detected: {}".format(number))
 
         message = ''
 
-        if number < width // 2:
+        if number < width_or_height // 2:
             message += "Warning: too few valid positions are detected. The result may be inaccurate.\n"
             message += "Try to increase the threshold\n"
 
-        if number > width * 2:
+        if number > width_or_height * 2:
             message += "Warning: too many valid positions are detected. The result may be inaccurate."
             message += "Try to decrease the threshold"
-
-        #
-        if self.mode == 'column':
-            width_or_height = width
-        elif self.mode == 'row':
-            width_or_height = height
 
         direction, start_frame_no, end_frame_no, sqr_error = self.linear_regression_column(wipe_positions, wipe_frames, width_or_height)
         start_frame_image = self.get_frame(start_frame_no)
