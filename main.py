@@ -206,7 +206,7 @@ class CopyPixelPage(Page):
             path_var.set("SOMEPATH/" + path_shorten(video_file))
             # print(video_file)
 
-        tk.Button(self, text='Slect Video File',
+        tk.Button(self, text='Select Video File',
                   width=4, height=1,
                   command=select_file).grid(row=5, column=0, rowspan=1, columnspan=4, sticky='NESW')
 
@@ -246,7 +246,7 @@ class CopyPixelPage(Page):
         loading_img = ImageTk.PhotoImage(loading_img)
 
         copypixel_sti_label = tk.Label(self)
-        copypixel_sti_label.grid(row=19, column=10, rowspan=20, columnspan=30, sticky="NESW", padx=0)
+        copypixel_sti_label.grid(row=19, column=20, rowspan=20, columnspan=20, sticky="NESW", padx=0)
 
         # Start detection
         def detection():
