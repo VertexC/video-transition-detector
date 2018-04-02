@@ -4,6 +4,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 from tkinter import messagebox
+from src.model.detectresult import DetectResult
+from src.model.ibm import IbmDetector
+from src.model.intersection import IntersectionDetector
 import cv2
 import numpy as np
 import math
@@ -23,15 +26,7 @@ class FileChooser():
     def __init__(self):
         self.path_var = tk.StringVar()
 
-    def get_path_var(self):
-        return self.path_var
-
-    def get_video_file(self):
-        return self.video_file
-
     def choose_file(self):
-        self.video_file = filedialog.askopenfilename()
-
         def path_shorten(path):
             while len(path) > 40:
                 i = 0
@@ -43,50 +38,152 @@ class FileChooser():
                     return path
             return path
 
-        self.path_var.set("SOMEPATH/" + path_shorten(self.video_file))
-        print(self.video_file)
+        self.video_file = filedialog.askopenfilename()
+        if not self.video_file:
+            return
+        self.path_var.set(path_shorten(self.video_file))
 
 
 class Page(tk.Frame):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
 
-
-
-class HistogramDifferencePage(Page):
-    def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwargs)
-
-        # file chooser
-        file_chooser = FileChooser()
-        tk.Button(self, text='Slect Video File',
-                  width=4, height=1,
-                  command=file_chooser.choose_file).grid(row=5, column=0, rowspan=1, columnspan=4, sticky='NESW')
-        tk.Label(self, textvariable=file_chooser.get_path_var,
-                 width=40, height=2).grid(row=5, column=4, rowspan=1, columnspan=40, sticky='NESW')
-
-        # threshold setter
-        threshold_label = tk.Label(self, text="Threshold")
-        threshold_slider = tk.Scale(self, from_=0, to=1, resolution=0.1, orient='horizontal')
-        threshold_slider.set(0.5)
-
-        threshold_slider.grid(row=7, rowspan=3, column=2, columnspan=2)
-        threshold_label.grid(row=8, column=0, columnspan=2)
-
-        # two button for two mode
-
-        # result
-
-
-class CopyPixelPage(Page):
-    def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwargs)
-
         rows = 0
         while rows < 60:
             self.rowconfigure(rows, weight=1)
             self.columnconfigure(rows, weight=1)
             rows += 1
+
+
+class LabelImageCombo(tk.Frame):
+
+    IMAGE_WIDTH = 150
+    IMAGE_HEIGHT = 150
+
+    def __init__(self, *args, **kwargs):
+        tk.Frame.__init__(self, *args, **kwargs)
+
+        self.text = tk.StringVar()
+        # self.text.set("Transition starts at frame number 1")
+        self.text_label = tk.Label(self, textvariable=self.text)
+        self.image_label = tk.Label(self)
+
+        self.text_label.pack()
+        self.image_label.pack()
+
+    def set_label(self, text):
+        self.text.set(text)
+
+    def set_image(self, image_array):
+        image = Image.fromarray(image_array, "RGB")
+        self.image = ImageTk.PhotoImage(image)
+        self.image_label.configure(image=self.image)
+        # self.image_label.image = self.image
+        pass
+
+
+class HistogramDifferenceResultFrame(tk.Frame):
+    def detect(self, detector, video_path, threshold):
+        detector.set_video(video_path)
+        detector.set_threshold(threshold)
+        detect_result = detector.detect()
+        # TODO: update result in tk
+        # Summary
+        self.result_text.set("{} | {}".format(detect_result.transition_type, detect_result.transition_direction))
+
+        # start
+        self.start_frame.set_image(detect_result.start_frame_image)
+        self.start_frame.set_label("Transition Starts at {}th frame".format(detect_result.start_frame_no))
+        # middle
+        self.middle_frame.set_image(detect_result.middle_frame_image)
+        self.middle_frame.set_label("Transition middle at {}th frame".format((detect_result.start_frame_no + detect_result.end_frame_no)//2))
+        # end
+        self.end_frame.set_image(detect_result.end_frame_image)
+        self.end_frame.set_label("Transition ends at {}th frame".format(detect_result.end_frame_no))
+
+    def __init__(self, *args, **kwargs):
+        tk.Frame.__init__(self, *args, **kwargs)
+
+        self.result_text = tk.StringVar()
+        self.result_header = tk.Label(self, textvariable=self.result_text,
+                                      font="bold")
+
+        self.start_frame = LabelImageCombo(self)
+        self.middle_frame = LabelImageCombo(self)
+        self.end_frame = LabelImageCombo(self)
+
+        self.result_header.pack()
+        self.start_frame.pack()
+        self.middle_frame.pack()
+        self.end_frame.pack()
+
+
+class HistogramDifferencePage(Page):
+
+    def detect(self, detector):
+        # accumulate parameters and send to sub detectors
+
+        video_path = self.file_chooser.video_file
+        if not video_path:
+            messagebox.showinfo("Warning", "Please select a video file to detect.")
+            return
+        print(video_path)
+        threshold = self.threshold_slider.get()
+        self.result_frame.detect(detector, video_path, threshold)
+
+    def intersection_detect(self):
+        # accumulate parameters and send to sub detectors
+        self.detect(self.intersection_detector)
+    def ibm_detect(self):
+        # accumulate parameters and send to sub detectors
+        self.detect(self.ibm_detector)
+
+    def __init__(self, *args, **kwargs):
+        Page.__init__(self, *args, **kwargs)
+
+        # init detector
+        self.ibm_detector = IbmDetector()
+        self.intersection_detector = IntersectionDetector()
+
+        # file chooser
+        self.file_chooser = FileChooser()
+        file_chooser_label = tk.Label(self, text="Video file")
+        file_chooser_button = tk.Button(self, text='Select video file',
+                  width=8, height=1,
+                  command=self.file_chooser.choose_file)
+        file_chooser_path_label = tk.Label(self, textvariable=self.file_chooser.path_var,
+                 width=8, height=2)
+
+        file_chooser_label.grid(row=1, column=0, columnspan=4, padx=(30, 10), pady=(40, 20))
+        file_chooser_button.grid(row=1, column=4, rowspan=1, columnspan=8,
+                                 sticky='NESW', padx=(10, 10), pady=(40, 20))
+        file_chooser_path_label.grid(row=1, column=12, columnspan=4, padx=(10, 10), pady=(40, 20))
+
+        # threshold setter
+        threshold_label = tk.Label(self, text="Threshold")
+        self.threshold_slider = tk.Scale(self, from_=0, to=1, resolution=0.1, orient='horizontal')
+        self.threshold_slider.set(0.5)
+
+        threshold_label.grid(row=2, column=0, columnspan=4)
+        self.threshold_slider.grid(row=2, column=4, rowspan=1, columnspan=8, pady=(20, 20))
+
+        # two button for two mode
+        # TODO: command
+        ibm_button = tk.Button(self, text="IBM", command=self.ibm_detect)
+        # TODO: command
+        intersection_button = tk.Button(self, text="Intersection", command=self.intersection_detect)
+
+        ibm_button.grid(row=3, column=0, columnspan=4, pady=(20, 20))
+        intersection_button.grid(row=3, column=4, columnspan=4)
+
+        # result
+        self.result_frame = HistogramDifferenceResultFrame(self)
+        self.result_frame.grid(row=0, column=16, rowspan=8, columnspan=8)
+
+
+class CopyPixelPage(Page):
+    def __init__(self, *args, **kwargs):
+        Page.__init__(self, *args, **kwargs)
 
         # File Selector
         path_var = tk.StringVar()
@@ -220,7 +317,7 @@ class MainApplication(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.title('Video Transition Detector')
-    root.geometry('800x800')
+    root.geometry('600x700')
 
     MainApplication(root).pack(side="top", fill="both", expand=True)
     root.mainloop()

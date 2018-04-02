@@ -7,7 +7,6 @@ from sklearn.metrics import mean_squared_error
 class IntersectionDetector(Detector):
     ACCEPTED_MODE = ['column', 'row']
     mode = 'column'
-    cap = None
 
     detect_result = None
 
@@ -152,13 +151,13 @@ class IntersectionDetector(Detector):
 
         frames_pred = regr.predict(positions_test)
 
-        plt.scatter(wipe_positions, wipe_frames, color='black', linewidths=1)
-        plt.plot(positions_test, frames_pred, color='blue', linewidth=3)
-
-        # plt.xticks(())
-        # plt.yticks(())
-
-        plt.show()
+        # plt.scatter(wipe_positions, wipe_frames, color='black', linewidths=1)
+        # plt.plot(positions_test, frames_pred, color='blue', linewidth=3)
+        #
+        # # plt.xticks(())
+        # # plt.yticks(())
+        #
+        # plt.show()
         start, end = np.round(sorted(frames_pred.flatten()))
         sqr_error = mean_squared_error(wipe_frames, regr.predict(wipe_positions))
         # print("start/end frame: {}/{}".format(start, end))
@@ -224,16 +223,18 @@ class IntersectionDetector(Detector):
         elif self.mode == 'row':
             width_or_height = height
 
-        direction, start, end, sqr_error = self.linear_regression_column(wipe_positions, wipe_frames, width_or_height)
+        direction, start_frame_no, end_frame_no, sqr_error = self.linear_regression_column(wipe_positions, wipe_frames, width_or_height)
+        start_frame_image = self.get_frame(start_frame_no)
+        middle_frame_image = self.get_frame((start_frame_no + end_frame_no)//2)
+        end_frame_image = self.get_frame(end_frame_no)
+
 
         type = "horizontal" if self.mode == "col" else "vertical"
-        return DetectResult(type, direction, abs(number - width_or_height), start, end, message)
+        return DetectResult(type, direction, abs(number - width_or_height),
+                            start_frame_no, end_frame_no,
+                            start_frame_image, middle_frame_image, end_frame_image,
+                            message)
 
-    def show_frame(self, frame):
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
-        ret, some_frame = self.cap.read()
-        plt.imshow(cv2.cvtColor(some_frame, cv2.COLOR_BGR2RGB))
-        plt.show()
 
     def show_result(self):
 
@@ -243,11 +244,9 @@ class IntersectionDetector(Detector):
         if not self.cap.isOpened():
             self.cap = cv2.VideoCapture(self.video_path)
 
-        start = self.detect_result.start_frame
-        end = self.detect_result.end_frame
-        self.show_frame(start)
-        self.show_frame((start + end) // 2)
-        self.show_frame(end)
+        self.show_frame(self.detect_result.start_frame_image)
+        self.show_frame(self.detect_result.middle_frame_image)
+        self.show_frame(self.detect_result.end_frame_image)
 
     def detect(self):
         best_result = None

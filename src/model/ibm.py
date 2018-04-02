@@ -4,13 +4,7 @@ from src.model.detector import *
 class IbmDetector(Detector):
     detect_result = None
     threshold = 0.25
-    cap = None
 
-    def show_frame(self, frame):
-        self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
-        ret, some_frame = self.cap.read()
-        plt.imshow(cv2.cvtColor(some_frame, cv2.COLOR_BGR2RGB))
-        plt.show()
 
     def show_result(self):
         if not self.detect_result:
@@ -19,11 +13,9 @@ class IbmDetector(Detector):
         if not self.cap.isOpened():
             self.cap = cv2.VideoCapture(self.video_path)
 
-        start = self.detect_result.start_frame
-        end = self.detect_result.end_frame
-        self.show_frame(start)
-        self.show_frame((start + end) // 2)
-        self.show_frame(end)
+        self.show_frame(self.detect_result.start_frame_image)
+        self.show_frame(self.detect_result.middle_frame_image)
+        self.show_frame(self.detect_result.end_frame_image)
 
     def rgb_to_chroma(self, rgb_m):
         """
@@ -227,17 +219,28 @@ class IbmDetector(Detector):
                 else:
                     direction = "move down"
             error = residuals[0]
-            start_frame = X[0]
-            end_frame = X[-1]
-            self.detect_result = DetectResult(type, direction, error, start_frame, end_frame)
+            start_frame_no = X[0]
+            end_frame_no = X[-1]
+
+            cap = cv2.VideoCapture(self.video_path)
+            if not cap.isOpened():
+                raise FileNotFoundError('File {} not found'.format(self.video_path))
+            self.cap = cap
+
+            start_frame_image = self.get_frame(start_frame_no)
+            middle_frame_image = self.get_frame((start_frame_no + end_frame_no) // 2)
+            end_frame_image = self.get_frame(end_frame_no)
+
+            self.detect_result = DetectResult(type, direction, error, start_frame_no, end_frame_no,
+                                              start_frame_image, middle_frame_image, end_frame_image)
 
             # test: print linear regression result on sti
-            plt.figure(1)
-            X = np.array(X)
-            Y = np.array(Y)
-            plt.plot(X, Y, 'bo')
-            plt.plot(X, k * X + c, 'r--')
-            plt.show()
+            # plt.figure(1)
+            # X = np.array(X)
+            # Y = np.array(Y)
+            # plt.plot(X, Y, 'bo')
+            # plt.plot(X, k * X + c, 'r--')
+            # plt.show()
 
             return True
 

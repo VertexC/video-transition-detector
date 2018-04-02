@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 
 
 class Detector:
+    cap = None
     video_path = ""
     to_chromatic = True
     to_col = True
@@ -29,5 +30,15 @@ class Detector:
     def set_threshold(self, threshold):
         self.threshold = threshold
 
+    def get_frame(self, frame_no):
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+        ret, frame_image = self.cap.read()
+        if not ret:
+            return None
+        return cv2.cvtColor(frame_image, cv2.COLOR_BGR2RGB)
+
+    def show_frame(self, image_rgb):
+        plt.imshow(image_rgb)
+        plt.show()
     def detect(self):
         pass
