@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
-
+from tkinter import messagebox
 # global variable
 video_file = None
 to_chromatic = True
@@ -14,7 +14,6 @@ sample_mode = None
 window = tk.Tk()
 window.title('Video Transition Detector')
 window.geometry('800x800')
-var = tk.StringVar()
 
 # gives weight to the cells in the grid
 rows = 0
@@ -56,6 +55,8 @@ while rows < 60:
 
 
 # File Selector
+path_var = tk.StringVar()
+
 def select_file():
     global video_file
     video_file = filedialog.askopenfilename()
@@ -69,7 +70,7 @@ def select_file():
             if i == len(path)-1:
                 return path
         return path
-    var.set("SOMEPATH/" + path_shorten(video_file))
+    path_var.set("SOMEPATH/" + path_shorten(video_file))
     print(video_file)
 
 tk.Button(copypixel_page, text='Slect Video File',
@@ -77,10 +78,12 @@ tk.Button(copypixel_page, text='Slect Video File',
           command=select_file).grid(row=5, column=0, rowspan=1, columnspan=4, sticky='NESW')
 
 # File Selected Text
-tk.Label(copypixel_page, textvariable=var,
+tk.Label(copypixel_page, textvariable=path_var,
          width=40, height=2).grid(row=5, column=4, rowspan=1, columnspan=40, sticky='NESW')
 
 # Sampling Choice
+var = tk.StringVar()
+
 def samling_mode_set():
     global sample_mode
     sample_mode = var.get()
@@ -102,6 +105,24 @@ col_choice = tk.Radiobutton(copypixel_page, text='MidCol Sampling',
                             command=samling_mode_set)
 col_choice.grid(row=23, column=0, rowspan=3, columnspan=4, sticky="NESW", padx=0)
 
-# start detection
+# Start detection
+def detection():
+    if video_file == None:
+        # warning dialog
+        messagebox.showinfo("Warning", "Please select a video file to detect.")
+        return
+    if sample_mode == None:
+        # warning dialog
+        messagebox.showinfo("Warning", "Please select a sampling mode.")
+        return
+
+
+tk.Button(copypixel_page,
+          text="Start Detection",
+          width=10, height=2, command=detection).grid(row=28, column=0, rowspan=1, columnspan=4, sticky="NESW")
+
+
+
+
 
 window.mainloop()
