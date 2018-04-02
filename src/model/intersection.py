@@ -89,7 +89,7 @@ class IntersectionDetector(Detector):
         total = np.sum(hist)
         return np.zeros(hist.shape) if total == 0 else hist / total
 
-    def intersection(self, stis_rg, threshold):
+    def intersection(self, stis_rg):
         """
         Use STI made of columns to generate all the transitions (position, time).
         Though is function is written for STI of columns, but it also works for rows
@@ -120,7 +120,7 @@ class IntersectionDetector(Detector):
             for f in range(I.shape[1]):
                 # I[i] intersects histogram of frames at time i+1 and i
                 I[col, f] = np.sum(np.minimum(H[col, f + 1], H[col, f]))
-                if I[col, f] < threshold:
+                if I[col, f] < self.threshold:
                     wipe_positions.append(col)
                     wipe_frames.append(f)
         #             print("Wipe at: {}".format(f + 1))
@@ -207,8 +207,7 @@ class IntersectionDetector(Detector):
             stis_rg[i] = self.bgr_to_rg(stis[i])
 
         # implements histogram intersection on GR color channels
-        threshold = 0.8
-        wipe_positions, wipe_frames = self.intersection(stis_rg, threshold)
+        wipe_positions, wipe_frames = self.intersection(stis_rg)
 
         number = wipe_positions.shape[0]
         # print("The number of transition detected: {}".format(number))
