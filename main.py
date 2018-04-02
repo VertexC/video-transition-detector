@@ -37,9 +37,10 @@ class FileChooser():
                     return path
             return path
 
-        self.video_file = filedialog.askopenfilename()
-        if not self.video_file:
+        video_file = filedialog.askopenfilename()
+        if not video_file:
             return
+        self.video_file = video_file
         self.path_var.set(path_shorten(self.video_file))
 
 
@@ -86,7 +87,6 @@ class HistogramDifferenceResultFrame(tk.Frame):
         detector.set_threshold(threshold)
         detect_result = detector.detect()
         if detect_result is not None:
-            # TODO: update result in tk
             # Summary
             self.result_text.set(
                 "Wipe: {} | {}".format(detect_result.transition_type, detect_result.transition_direction))
@@ -160,37 +160,36 @@ class HistogramDifferencePage(Page):
         # file chooser
         self.file_chooser = FileChooser()
         file_chooser_label = tk.Label(self, text="Video file")
-        file_chooser_button = tk.Button(self, text='Select video file',
-                                        width=8, height=1,
+        file_chooser_button = tk.Button(self, text='Open...',
+                                        width=4, height=1,
                                         command=self.file_chooser.choose_file)
         file_chooser_path_label = tk.Label(self, textvariable=self.file_chooser.path_var,
-                                           width=8, height=2)
+                                           width=8, height=1)
 
         file_chooser_label.grid(row=1, column=0, columnspan=4, padx=(30, 10), pady=(40, 20))
-        file_chooser_button.grid(row=1, column=4, rowspan=1, columnspan=8,
+        file_chooser_button.grid(row=1, column=4, rowspan=1, columnspan=4,
                                  sticky='NESW', padx=(10, 10), pady=(40, 20))
-        file_chooser_path_label.grid(row=1, column=12, columnspan=4, padx=(10, 10), pady=(40, 20))
+        file_chooser_path_label.grid(row=2, column=2, columnspan=12,
+                                     sticky='NESW', padx=(10, 10))
 
         # threshold setter
         threshold_label = tk.Label(self, text="Threshold")
         self.threshold_slider = tk.Scale(self, from_=0, to=1, resolution=0.1, orient='horizontal')
         self.threshold_slider.set(0.5)
 
-        threshold_label.grid(row=2, column=0, columnspan=4)
-        self.threshold_slider.grid(row=2, column=4, rowspan=1, columnspan=8, pady=(20, 20))
+        threshold_label.grid(row=3, column=0, columnspan=4)
+        self.threshold_slider.grid(row=3, column=4, rowspan=1, columnspan=8, pady=(20, 20))
 
         # two button for two mode
-        # TODO: command
         ibm_button = tk.Button(self, text="IBM", command=self.ibm_detect)
-        # TODO: command
         intersection_button = tk.Button(self, text="Intersection", command=self.intersection_detect)
 
-        ibm_button.grid(row=3, column=0, columnspan=4, pady=(20, 20))
-        intersection_button.grid(row=3, column=4, columnspan=4)
+        ibm_button.grid(row=4, column=0, columnspan=4, pady=(20, 20))
+        intersection_button.grid(row=4, column=4, columnspan=4)
 
         # result
         self.result_frame = HistogramDifferenceResultFrame(self)
-        self.result_frame.grid(row=0, column=16, rowspan=8, columnspan=8)
+        self.result_frame.grid(row=1, column=14, rowspan=8, columnspan=8, sticky='E')
 
 
 class CopyPixelPage(Page):
@@ -329,7 +328,7 @@ class MainApplication(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.title('Video Transition Detector')
-    root.geometry('600x700')
+    root.geometry('600x600')
 
     MainApplication(root).pack(side="top", fill="both", expand=True)
     root.mainloop()
