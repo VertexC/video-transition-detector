@@ -3,8 +3,6 @@ from src.model.detector import *
 
 class IbmDetector(Detector):
     detect_result = None
-    threshold = 0.25
-
 
     def show_result(self):
         if not self.detect_result:
@@ -184,10 +182,10 @@ class IbmDetector(Detector):
 
         X = []
         Y = []
-        if self.to_chromatic:
-            self.threshold = 0.25
-        else:
-            self.threshold = 0.6
+        # if self.to_chromatic:
+        #     self.threshold = 0.25
+        # else:
+        #     self.threshold = 0.6
         for f in range(col):
             for i in range(row):
                 if self.sti[i, f] > self.threshold:

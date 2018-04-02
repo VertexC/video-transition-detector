@@ -56,8 +56,8 @@ class Page(tk.Frame):
 
 
 class LabelImageCombo(tk.Frame):
-    IMAGE_WIDTH = 150
-    IMAGE_HEIGHT = 150
+    IMAGE_WIDTH = 100
+    IMAGE_HEIGHT = 100
 
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
@@ -74,6 +74,7 @@ class LabelImageCombo(tk.Frame):
         self.text.set(text)
 
     def set_image(self, image_array):
+        image_array = cv2.resize(image_array, (self.IMAGE_WIDTH, self.IMAGE_HEIGHT), interpolation=cv2.INTER_CUBIC)
         image = Image.fromarray(image_array, "RGB")
         self.image = ImageTk.PhotoImage(image)
         self.image_label.configure(image=self.image)
@@ -138,7 +139,6 @@ class HistogramDifferencePage(Page):
         if not video_path:
             messagebox.showinfo("Warning", "Please select a video file to detect.")
             return
-        print(video_path)
         threshold = self.threshold_slider.get()
         self.result_frame.detect(detector, video_path, threshold)
 
@@ -169,7 +169,7 @@ class HistogramDifferencePage(Page):
         file_chooser_label.grid(row=1, column=0, columnspan=4, padx=(30, 10), pady=(40, 20))
         file_chooser_button.grid(row=1, column=4, rowspan=1, columnspan=4,
                                  sticky='NESW', padx=(10, 10), pady=(40, 20))
-        file_chooser_path_label.grid(row=2, column=2, columnspan=12,
+        file_chooser_path_label.grid(row=2, column=0, columnspan=12,
                                      sticky='NESW', padx=(10, 10))
 
         # threshold setter
@@ -328,7 +328,7 @@ class MainApplication(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.title('Video Transition Detector')
-    root.geometry('600x600')
+    root.geometry('800x600')
 
     MainApplication(root).pack(side="top", fill="both", expand=True)
     root.mainloop()
