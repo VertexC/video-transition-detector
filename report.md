@@ -224,7 +224,7 @@ We enjoy more difficulty!
 One main drawback we found is `chromaticity` **enlarges the noise on dark image**. To illustrate this idea. There are two images below: one with RGB(0,0,0), and another (1, 0, 0) (RGB value from 0 to 255).
 
 <div>
-<img src="screenshot/chromaticity/r0.png" width="">
+<img style="padding-bottom:10px;" src="screenshot/chromaticity/r0.png" width="">
 </div>
 
 <div>

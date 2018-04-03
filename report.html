@@ -234,8 +234,9 @@ code.language-yaml {
 pipenv <span class="token function">install</span>
 <span class="token comment" spellcheck="true"># run program</span>
 python3 main.py
-</pre><h2 class="mume-header" id="presentation-video-bob">Presentation Video - Bob</h2>
+</pre><h2 class="mume-header" id="presentation-video">Presentation Video</h2>
 
+<p><a href="https://drive.google.com/open?id=1oB5JkV05ktdNh86OKANzzXaXYy415HbF">Click Me!</a></p>
 <h2 class="mume-header" id="feature-list">Feature list</h2>
 
 <ul>
@@ -258,7 +259,16 @@ python3 main.py
 </ul>
 </li>
 </ul>
-<h2 class="mume-header" id="screenshots-of-final-product-bob">Screenshots of Final Product - Bob</h2>
+<h2 class="mume-header" id="screenshots-of-final-product">Screenshots of Final Product</h2>
+
+<div>
+<img style="border:1px grey solid;" src="screenshot/program/copypixel.png" width="60%">
+</div>
+<idv>
+<img style="border:1px grey solid;" src="screenshot/program/histogramDifference.png" width="60%">
+
+<idv>
+<img style="border:1px grey solid;" src="screenshot/program/notdetected.png" width="60%">
 
 <h2 class="mume-header" id="implementation-details">Implementation Details</h2>
 
@@ -300,7 +310,7 @@ when wipe transition happens in video, say horizontal wipe, we can see an appare
         wipe_frames<span class="token punctuation">.</span>append<span class="token punctuation">(</span>f<span class="token punctuation">)</span>
 </pre><p>We use element-wise <code>minimum</code> opeartion provided by <code>numpy</code> to compute the instersection. And iterate for each pair of adjacent frame of the video.</p>
 <p>If the intersection is smaller than a threshold value, we determine there is a transition between the two frames</p>
-<h4 class="mume-header" id="ibms-method-bob">IBM's Method - Bob</h4>
+<h4 class="mume-header" id="ibms-method">IBM's Method</h4>
 
 <p>This method is so-called <strong>HQDM</strong>(Histogram Quadratic Distance Measures). The main idea of it is to calculate the distance between two histograms, hq and ht by using the equation<br>
 <span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>D</mi><mrow><mi>H</mi><mi>Q</mi><mi>D</mi><mi>M</mi></mrow></msub><mo>(</mo><mi>q</mi><mo separator="true">,</mo><mi>t</mi><mo>)</mo><mo>=</mo><mo>(</mo><msub><mi>h</mi><mi>q</mi></msub><mo>−</mo><msub><mi>h</mi><mi>t</mi></msub><msup><mo>)</mo><mi>T</mi></msup><mi>A</mi><mo>(</mo><msub><mi>h</mi><mi>q</mi></msub><mo>−</mo><msub><mi>h</mi><mi>t</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">D_{HQDM}(q,t)=(h_q - h_t)^T A (h_q - h_t)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8913309999999999em;"></span><span class="strut bottom" style="height:1.177439em;vertical-align:-0.286108em;"></span><span class="base"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.328331em;"><span style="top:-2.5500000000000003em;margin-left:-0.02778em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathit mtight" style="margin-right:0.08125em;">H</span><span class="mord mathit mtight">Q</span><span class="mord mathit mtight" style="margin-right:0.02778em;">D</span><span class="mord mathit mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"></span></span></span></span></span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mpunct">,</span><span class="mord rule" style="margin-right:0.16666666666666666em;"></span><span class="mord mathit">t</span><span class="mclose">)</span><span class="mord rule" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mord rule" style="margin-right:0.2777777777777778em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathit">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"></span></span></span></span></span><span class="mord rule" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mord rule" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathit">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913309999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord mathit">A</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight" style="margin-right:0.03588em;">q</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"></span></span></span></span></span><span class="mord rule" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mord rule" style="margin-right:0.2222222222222222em;"></span><span class="mord"><span class="mord mathit">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2805559999999999em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathit mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span><span class="mclose">)</span></span></span></span></span><br>
@@ -333,7 +343,7 @@ a_m <span class="token operator">=</span> np<span class="token punctuation">.</s
         histogram_vector_table<span class="token punctuation">[</span>row<span class="token punctuation">]</span> <span class="token operator">=</span> v<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">]</span>
         sti<span class="token punctuation">[</span>row<span class="token punctuation">,</span> f <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> d_2
 
-</pre><h4>Linear Regression - Leo</h4>
+</pre><h4>Linear Regression</h4>
 <p>After we compute the difference of the histogram for frame of each column / row. We get a 2D array, with one axis is frame and the other is column / row. This 2D array is either 0 or 1 because we classify them by threshold value. Value 1 means we have determined there is a transition at that frame and that column / row.</p>
 <p>In order to get the start time and end time of the transition, and filter noise, we use <strong>linear regression</strong> to generate a line. And use this line as the transition line.</p>
 <p>The principle of <strong>linear regression</strong> is to find a line that minimize the <strong>square root error</strong> for each points on the graph.</p>
@@ -362,10 +372,18 @@ mpl<span class="token punctuation">.</span>use<span class="token punctuation">(<
 </pre><p>And there iscConflict between matplotlib &amp;&amp; cv2.imshow. The RuntimeError above occur even if solution applied. Try to use only one of them (matplotlib) to show some image.</p>
 <h2>Discussion</h2>
 <h3>About Project</h3>
+<h4>How hard was this project?</h4>
+<p>The project is easy. The most difficult part is to understand what's the project requirement.</p>
+<p>The coding part does not have too much difficulty because <code>opencv</code> and <code>numpy</code> provide useful libraries.</p>
+<h4>State briefly how would you improve this project?</h4>
+<p>Give less hint and let students to come up with their own solution to detect video transitions, which encourages more creative work.</p>
+<h4>Any ideas for a different project at the same difficulty level? Would you enjoy more difficulty? Less?</h4>
+<p>An different project proposal is, given many video clips, which can be merged into a complete video. Write a program that can automatically merge videos for you.</p>
+<p>We enjoy more difficulty!</p>
 <h4>Is <code>chromaticity</code>  really improve the characteristics of image?</h4>
 <p>One main drawback we found is <code>chromaticity</code> <strong>enlarges the noise on dark image</strong>. To illustrate this idea. There are two images below: one with RGB(0,0,0), and another (1, 0, 0) (RGB value from 0 to 255).</p>
 <div>
-<img src="screenshot/chromaticity/r0.png" width="">
+<img style="padding-bottom:10px;" src="screenshot/chromaticity/r0.png" width="">
 </div>
 <div>
 <img src="screenshot/chromaticity/r1.png" width="">
@@ -374,16 +392,27 @@ mpl<span class="token punctuation">.</span>use<span class="token punctuation">(<
 <p>So the <code>chromaticity</code> enlarges the noise in dark image because the <strong>denominator</strong> (R+G+B) is too small. It will regard some minor change in dark images as transition.</p>
 <h3 class="mume-header" id="further-improvement">Further Improvement</h3>
 
-</div></div>
+<h4 class="mume-header" id="idea-about-wipe-in-diagonal-direction">Idea about Wipe in diagonal direction</h4>
+
+<p>The program currently can detect horizontal wipe and vertical wipe automatically. And we have considered to move it forward to other direction of wipe. For wipe in left-up direction, we can decompose the direction into left and up. In this way, the wipe could be detected using hitogram difference via both row and col sampling. However, the challenge is, in most condition, as it doesn't wipe in one direction, the change of row and col between frames can be relevantly small.</p>
+<p>One solution is to rotate the frame, in some radians, then wipe can be horizontal or vertical again. Another solution is to sampling with smaller frequency. Say we only sample the frame numbered 0, 10, 20, 30... Then the difference of histogram can be detected with the methods above. However, it requires the video itself has a lot frames to sample.</p>
+<h4 class="mume-header" id="about-gui">About GUI</h4>
+
+<p>As for time limit, we choose tkinter for GUI. But tkinter is relevant unconsistant across platforms and really hard to orgnize the layout. Maybe a more elegant way is to use Django or Vue+Flask to make GUI in browser.</p>
+<h4 class="mume-header" id="a-general-solution-for-any-transition-types">A general solution for any transition types</h4>
+
+<p>STI of columns and rows is only suitable for vertical and horizontal wipe. If we use the compare frame itself, we can detect all kinds of transitions.</p>
+<p>The idea is compare the difference of adjacent image. If the difference is greater than a threshold, we determine that is transition. The method of comparision can be histogram, or feature points matching.</p>
+</div></div></idv></idv>
       </div>
       <div class="md-sidebar-toc"><ul>
 <li><a href="#video-transition-detector-v001">Video Transition Detector v0.0.1</a>
 <ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#build-guide">Build Guide</a></li>
-<li><a href="#presentation-video-bob">Presentation Video - Bob</a></li>
+<li><a href="#presentation-video">Presentation Video</a></li>
 <li><a href="#feature-list">Feature list</a></li>
-<li><a href="#screenshots-of-final-product-bob">Screenshots of Final Product - Bob</a></li>
+<li><a href="#screenshots-of-final-product">Screenshots of Final Product</a></li>
 <li><a href="#implementation-details">Implementation Details</a>
 <ul>
 <li><a href="#sti-based-on-copy-pixel">STI based on Copy Pixel</a></li>
@@ -392,10 +421,16 @@ mpl<span class="token punctuation">.</span>use<span class="token punctuation">(<
 <li><a href="#compute-chromaticity">Compute Chromaticity</a></li>
 <li><a href="#calculate-histogram">Calculate Histogram</a></li>
 <li><a href="#intersection-method">Intersection Method</a></li>
-<li><a href="#ibms-method-bob">IBM's Method - Bob</a></li>
+<li><a href="#ibms-method">IBM's Method</a></li>
 </ul>
 </li>
-<li><a href="#further-improvement">Further Improvement</a></li>
+<li><a href="#further-improvement">Further Improvement</a>
+<ul>
+<li><a href="#idea-about-wipe-in-diagonal-direction">Idea about Wipe in diagonal direction</a></li>
+<li><a href="#about-gui">About GUI</a></li>
+<li><a href="#a-general-solution-for-any-transition-types">A general solution for any transition types</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
