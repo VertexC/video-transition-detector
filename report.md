@@ -24,6 +24,8 @@ python3 main.py
 
 ## Presentation Video
 
+[Click Me!](https://drive.google.com/open?id=1oB5JkV05ktdNh86OKANzzXaXYy415HbF)
+
 ## Feature list
 - [ ] Video Transition Detection Based on **Spatio Temporal Image (STI)**
 - [ ] **Copy pixel** 
@@ -37,6 +39,18 @@ python3 main.py
   
 
 ## Screenshots of Final Product
+
+<div >
+<img style="border:1px grey solid;" src="screenshot/program/copypixel.png" width="60%">
+</div>
+
+<idv>
+<img style="border:1px grey solid;" src="screenshot/program/histogramDifference.png" width="60%">
+</div>
+
+<idv>
+<img style="border:1px grey solid;" src="screenshot/program/notdetected.png" width="60%">
+</div>
 
 ## Implementation Details
 
