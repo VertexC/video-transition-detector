@@ -207,3 +207,13 @@ These two images is indistinguishable for human, but in `chromaticity` one is rg
 So the `chromaticity` enlarges the noise in dark image because the **denominator** (R+G+B) is too small. It will regard some minor change in dark images as transition.
 
 ### Further Improvement
+
+#### Idea about Wipe in diagonal direction
+
+The program currently can detect horizontal wipe and vertical wipe automatically. And we have considered to move it forward to other direction of wipe. For wipe in left-up direction, we can decompose the direction into left and up. In this way, the wipe could be detected using hitogram difference via both row and col sampling. However, the challenge is, in most condition, as it doesn't wipe in one direction, the change of row and col between frames can be relevantly small.
+
+One solution is to rotate the frame, in some radians, then wipe can be horizontal or vertical again. Another solution is to sampling with smaller frequency. Say we only sample the frame numbered 0, 10, 20, 30... Then the difference of histogram can be detected with the methods above. However, it requires the video itself has a lot frames to sample.
+
+#### About GUI
+
+As for time limit, we choose tkinter for GUI. But tkinter is relevant unconsistant across platforms and really hard to orgnize the layout. Maybe a more elegant way is to use Django or Vue+Flask to make GUI in browser.
