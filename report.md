@@ -13,7 +13,7 @@ We apply pipenv to manage the python package below:
 - numpy: for matrix manipulation
 - PIL: for showing image from opencv in tkinter
 - tkinter: for GUI
-   
+  
 ## Build Guide
 ```bash
 # install depend packages
@@ -36,7 +36,7 @@ python3 main.py
         * Histogram Intersection Method
         * IBM's Histogram Distance Method
     + Apply linear regression for auto detection
-  
+
 
 ## Screenshots of Final Product
 
@@ -203,6 +203,22 @@ And there iscConflict between matplotlib && cv2.imshow. The RuntimeError above o
 
 ### About Project
 
+#### How hard was this project?
+
+The project is easy. The most difficult part is to understand what's the project requirement.
+
+The coding part does not have too much difficulty because `opencv` and `numpy` provide useful libraries. 
+
+#### State briefly how would you improve this project?
+
+Give less hint and let students to come up with their own solution to detect video transitions, which encourages more creative work.
+
+#### Any ideas for a different project at the same difficulty level? Would you enjoy more difficulty? Less?
+
+An different project proposal is, given many video clips, which can be merged into a complete video. Write a program that can automatically merge videos for you.
+
+We enjoy more difficulty!
+
 #### Is `chromaticity`  really improve the characteristics of image?
 
 One main drawback we found is `chromaticity` **enlarges the noise on dark image**. To illustrate this idea. There are two images below: one with RGB(0,0,0), and another (1, 0, 0) (RGB value from 0 to 255).
@@ -231,3 +247,9 @@ One solution is to rotate the frame, in some radians, then wipe can be horizonta
 #### About GUI
 
 As for time limit, we choose tkinter for GUI. But tkinter is relevant unconsistant across platforms and really hard to orgnize the layout. Maybe a more elegant way is to use Django or Vue+Flask to make GUI in browser.
+
+#### A general solution for any transition types
+
+STI of columns and rows is only suitable for vertical and horizontal wipe. If we use the compare frame itself, we can detect all kinds of transitions. 
+
+The idea is compare the difference of adjacent image. If the difference is greater than a threshold, we determine that is transition. The method of comparision can be histogram, or feature points matching.
